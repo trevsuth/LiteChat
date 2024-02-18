@@ -27,35 +27,42 @@ def chat(messages):
             return message
 
 def app():
-    st.title("Chat with LLaMA")
+        # Create a column layout for the icon and the title
+    col1, col2 = st.columns([1, 8])
     
-    if 'messages' not in st.session_state:
-        st.session_state.messages = []
-
-    # Display conversation
-    conversation_box = st.empty()  # Placeholder for dynamic update
+    with col1:  # Column for the icon
+        st.image("./fiddle.ico", width=30)  # Adjust the width as needed
     
-    # Update conversation display
-    conversation_text = "\n".join([f"{msg['role'].title()}: {msg['content']}" for msg in st.session_state.messages])
-    conversation_box.text_area("Conversation", value=conversation_text, height=300, disabled=True)
+    with col2:  # Column for the title
+        st.title("Chat with LLaMA")
+        
+        if 'messages' not in st.session_state:
+            st.session_state.messages = []
 
-    # User input at the bottom
-    input_key = st.session_state.get("input_key", "user_input_0")
-    user_input = st.text_input("Enter a prompt:", key=input_key, placeholder="Type your message here...")
+        # Display conversation
+        conversation_box = st.empty()  # Placeholder for dynamic update
+        
+        # Update conversation display
+        conversation_text = "\n".join([f"{msg['role'].title()}: {msg['content']}" for msg in st.session_state.messages])
+        conversation_box.text_area("Conversation", value=conversation_text, height=500, disabled=True)
 
-    if st.button("Send"):
-        if user_input:  # Ensure there is an input
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            message = chat(st.session_state.messages)
-            st.session_state.messages.append(message)
-            
-            # Update conversation display
-            conversation_text = "\n".join([f"{msg['role'].title()}: {msg['content']}" for msg in st.session_state.messages])
-            conversation_box.text_area("Conversation", value=conversation_text, height=300, disabled=True)
-            
-            # Update the key to reset the input box
-            new_key_index = int(input_key.split("_")[-1]) + 1
-            st.session_state["input_key"] = f"user_input_{new_key_index}"
+        # User input at the bottom
+        input_key = st.session_state.get("input_key", "user_input_0")
+        user_input = st.text_input("Enter a prompt:", key=input_key, placeholder="Type your message here...")
+
+        if st.button("Send"):
+            if user_input:  # Ensure there is an input
+                st.session_state.messages.append({"role": "user", "content": user_input})
+                message = chat(st.session_state.messages)
+                st.session_state.messages.append(message)
+                
+                # Update conversation display
+                conversation_text = "\n".join([f"{msg['role'].title()}: {msg['content']}" for msg in st.session_state.messages])
+                conversation_box.text_area("Conversation", value=conversation_text, height=300, disabled=True)
+                
+                # Update the key to reset the input box
+                new_key_index = int(input_key.split("_")[-1]) + 1
+                st.session_state["input_key"] = f"user_input_{new_key_index}"
 
 if __name__ == "__main__":
     app()
