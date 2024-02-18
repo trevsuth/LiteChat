@@ -27,14 +27,16 @@ def chat(messages):
             return message
 
 def app():
-        # Create a column layout for the icon and the title
     col1, col2 = st.columns([1, 8])
     
-    with col1:  # Column for the icon
-        st.image("./fiddle.ico", width=30)  # Adjust the width as needed
+    # Left Sidebar
+    with col1:  
+        st.write("Sidebar")
     
-    with col2:  # Column for the title
-        st.title("Chat with LLaMA")
+    # Main section
+    with col2:  
+        st.image("./fiddle.ico", width=60)
+        st.title("LightChat")
         
         if 'messages' not in st.session_state:
             st.session_state.messages = []
@@ -48,9 +50,9 @@ def app():
 
         # User input at the bottom
         input_key = st.session_state.get("input_key", "user_input_0")
-        user_input = st.text_input("Enter a prompt:", key=input_key, placeholder="Type your message here...")
-
-        if st.button("Send"):
+        
+        def send_message():
+            user_input = st.session_state[input_key]  # Access the input using dynamic key
             if user_input:  # Ensure there is an input
                 st.session_state.messages.append({"role": "user", "content": user_input})
                 message = chat(st.session_state.messages)
@@ -60,9 +62,12 @@ def app():
                 conversation_text = "\n".join([f"{msg['role'].title()}: {msg['content']}" for msg in st.session_state.messages])
                 conversation_box.text_area("Conversation", value=conversation_text, height=300, disabled=True)
                 
-                # Update the key to reset the input box
+                # Reset the input box by updating the key
                 new_key_index = int(input_key.split("_")[-1]) + 1
                 st.session_state["input_key"] = f"user_input_{new_key_index}"
+                st.session_state[input_key] = ''  # Clear the current input
+
+        user_input = st.text_input("Enter a prompt:", key=input_key, placeholder="Type your message here...", on_change=send_message)
 
 if __name__ == "__main__":
     app()
