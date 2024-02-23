@@ -2,10 +2,9 @@ import streamlit as st
 import json
 import requests
 
-# NOTE: ollama must be running for this to work, start the ollama app or run `ollama serve`
-model = "mistral"  # Update this for whatever model you wish to use
+st.set_page_config(layout="wide")
 
-def chat(messages):
+def chat(model, messages):
     r = requests.post(
         "http://0.0.0.0:11434/api/chat",
         json={"model": model, "messages": messages, "stream": True},
@@ -27,15 +26,20 @@ def chat(messages):
             return message
 
 def app():
-    col1, col2 = st.columns([1, 8])
+    col1, col2 = st.columns([1, 6])
     
     # Left Sidebar
     with col1:  
-        st.write("Sidebar")
+        # Dropdown for model selection
+        model = st.selectbox(
+            "Choose a model:",
+            options=['llama2', 'codellama', 'orca-mini', 'mistral'],
+            index=3 #Default value is mistral
+        )
     
     # Main section
     with col2:  
-        st.image("./fiddle.ico", width=60)
+        # st.image("./fiddle.ico", width=60)
         st.title("LightChat")
         
         if 'messages' not in st.session_state:
@@ -55,7 +59,7 @@ def app():
             user_input = st.session_state.get(input_key, '')  # Access the input using dynamic key
             if user_input.strip():  # Ensure there is non-empty input
                 st.session_state.messages.append({"role": "user", "content": user_input})
-                message = chat(st.session_state.messages)
+                message = chat(model, st.session_state.messages)
                 st.session_state.messages.append(message)
                 
                 # Update conversation display
