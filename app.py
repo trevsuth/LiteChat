@@ -31,6 +31,8 @@ def app():
     col1, col2 = st.columns([1, 5])
 
     with col1:
+        st.image('fiddle_logo.webp')
+        
         model = st.selectbox(
             "Choose a model:",
             options=["llama2", "codellama", "orca-mini", "mistral"],
